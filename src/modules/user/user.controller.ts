@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import User from "./user.model";
 import bcrypt from "bcrypt";
 import { Optional } from "sequelize"; // Import Optional
-import { IUser, ILoginCredentials } from "./interfaces/user.interface";
+import { IUser, ILoginCredentials } from "../interfaces/user.interface";
 import jwt from "jsonwebtoken"; // Import jwt
+import Shop from "../shop/shop.model";
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -56,7 +57,6 @@ export const signin = async (req: Request, res: Response) => {
       return;
     }
 
-    // Create a JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email }, // Payload
       JWT_SECRET, // Secret key
@@ -68,5 +68,27 @@ export const signin = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ error: "Internal server error." });
+  }
+};
+export const userprofile = async (req: Request, res: Response) => {
+  console.log("userprofile");
+
+  try {
+    console.log("userprofile try");
+    const userId = req.user?.userId;
+    console.log("userprofile userId", userId);
+
+    if (!userId) {
+      res.status(400).json({ error: "User ID is missing." });
+      return;
+    }
+
+    const shops = await Shop.findAll({ where: { userId } });
+
+    res.status(200).json({ shops });
+
+    console.log("shops ", shops);
+  } catch (error) {
+    console.log("userprofile cathc", error);
   }
 };

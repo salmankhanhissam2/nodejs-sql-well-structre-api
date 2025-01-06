@@ -1,14 +1,14 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../../config/dbConnection";
-import { IUser } from "./interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 
 class User extends Model<IUser> implements IUser {
   public id!: number;
   public username!: string;
   public password!: string;
   public email!: string;
-  public createdAt!: Date; // Sequelize will handle this automatically
-  public updatedAt!: Date; // Sequelize will handle this automatically
+  public createdAt!: Date;
+  public updatedAt!: Date;
 }
 
 User.init(
